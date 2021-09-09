@@ -1,0 +1,13 @@
+---
+# handlers file for mylb
+
+- name: reinicia balanceador
+  ansible.builtin.service:
+    name: haproxy 
+    state: restarted
+
+- name: recarga balanceador
+  ansible.builtin.service:
+    name: haproxy 
+    state: reload
+

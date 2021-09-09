@@ -1,0 +1,49 @@
+---
+# tasks file for mylb
+
+- name: Instalar haproxy
+  ansible.builtin.yum:
+    name: haproxy 
+    state: latest
+  tags: instalacion
+
+- name: Instalar keepalived
+  ansible.builtin.yum:
+    name: keepalived 
+    state: latest
+  tags: instalacion
+
+- name: Validar firewall
+  ansible.builtin.yum:
+    name: firewalld 
+    state: present
+  tags: instalacion
+
+- name: Copia achivo de configuracion haproxy
+  ansible.builtin.copy:
+    src: haproxy.cfg 
+    dest: /etc/haproxy/haproxy.cfg
+  notify: reinicia balanceador
+  tags: copia_archivo
+
+- name: Inicia y habilita haproxy
+  ansible.builtin.service:
+    name: haproxy 
+    state: started
+    enabled: true
+  tags: habilita_servicio
+
+- name: Inicia y habilita firewall
+  ansible.builtin.service:
+    name: firewalld 
+    state: started
+    enabled: true
+  tags: habilita_servicio
+
+- name: Abre el puerto http en firewall
+  firewalld:
+    port: 80/tcp
+    immediate: yes
+    permanent: yes
+    state: enabled
+  tags: abre_puerto
